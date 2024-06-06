@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import * as PDFDocument from 'pdfkit';
 import { lastValueFrom } from 'rxjs';
 import { AllMoviesResultType, MovieByIdResultType } from 'src/movies/types';
