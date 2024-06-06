@@ -1,19 +1,22 @@
 import { HttpService } from '@nestjs/axios';
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import * as PDFDocument from 'pdfkit';
 import { lastValueFrom } from 'rxjs';
 import { AllMoviesResultType, MovieByIdResultType } from 'src/movies/types';
+import { ErrorHandlerService } from 'src/services/error-handler.service';
 import { PassThrough } from 'stream';
 
 @Injectable()
 export class PdfService {
-  private logger = new Logger(PdfService.name);
-  constructor(private readonly httpService: HttpService) {}
-  getDoc() {
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly errorHandlerService: ErrorHandlerService,
+  ) {}
+  private getDoc() {
     return new PDFDocument();
   }
 
-  getStream() {
+  private getStream() {
     return new PassThrough();
   }
 
@@ -26,9 +29,12 @@ export class PdfService {
       );
       return Buffer.from(response.data, 'binary');
     } catch (error) {
-      const errorMessage = 'Error occured during fetching image';
-      this.logger.error(errorMessage);
-      throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
+      this.errorHandlerService.handleError(
+        PdfService.name,
+        `Error occured during fetching image`,
+        error,
+        HttpStatus.NOT_FOUND,
+      );
     }
   }
 

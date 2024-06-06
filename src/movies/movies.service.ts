@@ -1,12 +1,12 @@
 import { HttpService } from '@nestjs/axios';
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom } from 'rxjs';
 import { PdfService } from 'src/pdf/pdf.service';
+import { ErrorHandlerService } from 'src/services/error-handler.service';
 
 @Injectable()
 export class MoviesService {
-  private logger = new Logger(MoviesService.name);
   private MOVIE_API_BASE_URL: string;
   private IMAGE_BASE_URL: string;
   private headers: { [key: string]: string };
@@ -15,6 +15,7 @@ export class MoviesService {
     private readonly pdfSrvice: PdfService,
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
+    private readonly errorHandlerService: ErrorHandlerService,
   ) {
     this.MOVIE_API_BASE_URL = this.configService.get('MOVIE_API_BASE_URL');
     this.IMAGE_BASE_URL = this.configService.get('IMAGE_BASE_URL');
@@ -44,7 +45,12 @@ export class MoviesService {
 
       return this.pdfSrvice.createPdfStreamForAllMovies(modifiedData);
     } catch (error) {
-      this.errorHandler('Error occured during fetching all movies', error);
+      this.errorHandlerService.handleError(
+        MoviesService.name,
+        `Error occured during fetching all movies`,
+        error,
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -63,12 +69,12 @@ export class MoviesService {
         poster_path: `${this.IMAGE_BASE_URL}${poster_path}`,
       });
     } catch (error) {
-      this.errorHandler('Error occured during fetching movie by id', error);
+      this.errorHandlerService.handleError(
+        MoviesService.name,
+        `Error occured during fetching movie by id`,
+        error,
+        HttpStatus.BAD_REQUEST,
+      );
     }
-  }
-
-  errorHandler(message: string, error: Error) {
-    this.logger.error(message, error);
-    throw new HttpException(message, HttpStatus.BAD_REQUEST);
   }
 }
