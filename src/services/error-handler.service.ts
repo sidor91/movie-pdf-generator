@@ -11,6 +11,6 @@ export class ErrorHandlerService {
     const logger = new Logger(serviceName);
     logger.error(customMessage);
     logger.error(originalMessage);
-    throw new HttpException(`${customMessage}, (${originalMessage})`, status);
+    throw new HttpException(`${customMessage} | ${originalMessage}`, status);
   }
 }
