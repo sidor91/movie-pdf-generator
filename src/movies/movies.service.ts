@@ -44,9 +44,7 @@ export class MoviesService {
 
       return this.pdfSrvice.createPdfStreamForAllMovies(modifiedData);
     } catch (error) {
-      const message = 'Error occured during fetching all movies';
-      this.logger.error(message, error);
-      throw new HttpException(message, HttpStatus.BAD_REQUEST);
+      this.errorHandler('Error occured during fetching all movies', error);
     }
   }
 
@@ -65,9 +63,12 @@ export class MoviesService {
         poster_path: `${this.IMAGE_BASE_URL}${poster_path}`,
       });
     } catch (error) {
-      const message = 'Error occured during fetching movie by id';
-      this.logger.error(message, error);
-      throw new HttpException(message, HttpStatus.BAD_REQUEST);
+      this.errorHandler('Error occured during fetching movie by id', error);
     }
+  }
+
+  errorHandler(message: string, error: Error) {
+    this.logger.error(message, error);
+    throw new HttpException(message, HttpStatus.BAD_REQUEST);
   }
 }
