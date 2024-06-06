@@ -38,10 +38,10 @@ export class PdfService {
 
     doc.pipe(stream);
 
-    data.forEach(({ link, original_title, release_date, vote_average }) => {
+    data.forEach(({ link, title, release_date, vote_average }) => {
       doc
         .fontSize(12)
-        .text(`${original_title}`, {
+        .text(title, {
           underline: true,
           link,
         })

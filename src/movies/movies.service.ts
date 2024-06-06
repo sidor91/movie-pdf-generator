@@ -34,8 +34,8 @@ export class MoviesService {
       );
       const results = response.data.results;
       const modifiedData = results.map(
-        ({ id, original_title, release_date, vote_average }) => ({
-          original_title,
+        ({ id, title, release_date, vote_average }) => ({
+          title,
           release_date,
           vote_average,
           link: `${this.MOVIE_API_BASE_URL}/3/movie/${id}`,
